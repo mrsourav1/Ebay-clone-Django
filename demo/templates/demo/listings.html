@@ -1,0 +1,60 @@
+{% extends "demo/layout.html" %}
+
+{% block body %}
+
+
+
+{% if message %}
+<strong class="alert alert-danger">{{ message }}</strong>
+<br><br>
+{% endif %}
+
+<h2>{{ title }}:</h2>
+<p></p>
+
+{% for listing in listings %}
+<div class="listings">
+<div style="display:inline-block;vertical-align:top;">
+    <a href="{% url 'listing_details' listing.id %}">
+        <img class="listingimage" src="{{listing.picture}}" alt="Image Not Available!" height="200"><br>
+    </a>
+</div>
+<div style="display:inline-block;margin:10px;max-width: 500px;">
+    <p>
+        <!--Listing Title-->
+        <h3 style="display: inline-block;"> {{listing.title}} </h3> 
+        <!--See Details Link-->
+        <a style="margin-left: 5px;" href="{% url 'listing_details' listing.id %}">See Details</a><br>
+        
+        <!--Listing Description-->
+        <span style="color:grey">
+        {% if listing.description != "" %}
+            {{listing.description}}
+        {% else %}
+            The poster has not provided a description.
+        {% endif %}
+        </span><br>
+
+        <!--Listing Category-->
+        {% if listing.category == "" %}
+            <strong>Category:</strong> None<br>
+        {% else %}
+            <strong>Category:</strong> {{ listing.category|title }}<br>
+        {% endif %}
+        
+        <!--Current Price-->
+        <span style="color:green">
+            {% if listing.current_bid == null %}
+                ${{listing.starting_bid}}
+            {% else %}
+                ${{listing.current_bid.bid_price}}
+            {% endif %}
+        </span><br>
+    </p>
+</div>
+</div>
+<p></p>
+{% endfor %}
+
+
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "demo/layout.html" %}
+
+{% block body %}
+
+    <h1>listing page</h1>
+    <form action="{% url 'create_listing' %}"  method = "post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <input type="submit" value="submit">
+
+    </form>
+
+
+
+{% endblock %}

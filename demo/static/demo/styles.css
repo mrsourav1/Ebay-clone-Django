@@ -1,0 +1,57 @@
+body {
+    padding: 10px;
+}
+
+.listings {
+	border: 2px solid rgba(0, 0, 0, 0.479);
+	border-radius: 5px;
+	padding: 10px;
+}
+
+.bids {
+	display:inline-block; 
+	margin: 20px; 
+	border: 1px solid #00000062;
+	border-radius: 4px; 
+	padding: 10px;
+}
+
+.listingimage {
+	border: 1px solid #00000062;
+	border-radius: 4px;
+	padding: 3px
+  }
+
+input.add_to_watchlist {
+	background-color: #e7e7e7; /* Green */
+	border: none;
+	color: black;
+	padding: 10px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	border-radius: 12px;
+}
+
+input.remove_from_watchlist {
+	background-color: #e7e7e7; /* Green */
+	border: none;
+	color: black;
+	padding: 10px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	border-radius: 12px;
+}
+
+div.watchlist {
+	padding: 10px;
+}
+
+li.categories {
+	font-size: 30px;
+	font-weight: bold;
+	color:blue;
+}

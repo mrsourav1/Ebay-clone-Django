@@ -1,0 +1,157 @@
+{% extends "demo/layout.html" %}
+
+{% block body %}
+	{% if bid_message_f %}
+		<div class="alert alert-danger">
+			{{bid_message_f}}
+		</div>
+	{% endif %}
+
+	<h2>Listing Details:</h2>
+
+	<div class="listings">
+		<!-- Listing Picture -->
+		<div style="display:inline-block;vertical-align:top;" >
+			<img class="listingimage" src="{{listing.picture}}" alt="Image Not Available!" height="200"><br>
+		</div>
+		<!-- Listing Information -->
+		<div style="display:inline-block;margin:20px;max-width: 500px;">
+			<p>
+				<!--Listing Title-->
+				<h3> {{listing.title}} </h3> 
+				
+				<!--Listing Description-->
+				<span style="color:grey">
+				{% if listing.description != "" %}
+					{{listing.description}}
+				{% else %}
+					The poster has not provided a description.
+				{% endif %}
+				</span><br><br>
+				
+				<!--Current Bid-->
+				{% if listing.current_bid == null %}
+					<strong>Current Bid:</strong> <span style="color:grey"> No bids yet.</span><br>
+				{% else %}
+					{% if listing.sold is not True %}
+					<strong>Current Bid:</strong> <span style="color:green">${{listing.current_bid.bid_price}}</span><br>
+					{% endif %}
+				{% endif %}
+				
+				<!--Listing Category-->
+				{% if listing.category == "" %}
+					<strong>Category:</strong> None<br>
+				{% else %}
+					<strong>Category:</strong> {{ listing.category|title }}<br>
+				{% endif %}
+			</p>
+		</div>
+		<!-- Listing is still open -->
+		{% if listing.sold is not True %}
+			{% if user.is_authenticated %}
+				<!-- Closing an Auction (poster only) -->
+				{% if is_poster and listing.current_bid != null %}
+				<div class="bids">
+					<form action="{% url 'listing_details' listing.id %}" method="POST">
+						{% csrf_token %}
+						<input type="submit" class="btn btn-primary" name="close_auction" value="Accept Bid for ${{listing.current_bid.bid_price}} and Close Auction">
+					</form>
+				</div>
+				<!-- Can't close an Auction with no Bids (poster only) -->
+				{% elif is_poster and listing.current_bid == null%}
+				<br><br>
+				<div class="alert alert-dark">
+					No one has bid on this item yet!
+				</div>
+				{% elif listing.current_bid.bidder == user %}
+					<div class="alert alert-info">
+						You currently hold the leading bid on this for <strong>${{listing.current_bid.bid_price}}!</strong>
+					</div>
+				{% else %}
+				<!-- Making Bids (non poster only)-->
+				<div class="bids">
+					<form action="{% url 'listing_details' listing.id %}" method="POST">
+						{% csrf_token %}
+						<label for="bid">Make a bid: </label><br>
+						<input type="number" name="user_bid" min="0.00" max="10000.00" step="0.01"/>
+						<input type="submit" name="new_bid"><br><br>
+						<p>
+						{% if listing.current_bid == null %}
+							<strong>Minimum Bid:</strong> <span style="color:grey"> ${{listing.starting_bid}}</span><br>
+						{% else %}
+							<strong>Minimum Bid:</strong> ${{listing.current_bid.bid_price}}<br>
+						{% endif %}
+						</p>
+					</form>
+				</div>	
+				{% endif %}
+			{% endif %}
+		{% else %}
+		<!-- Listing is Closed -->
+		<div>
+			<p>
+				<div class="alert alert-primary" role="alert">
+					This auction has been closed, congratulations to the winner of this auction: <strong>{{listing.current_bid.bidder}}</strong>!<br>
+					The winning bid was ${{listing.current_bid.bid_price}}.
+				</div>
+			</p>
+		</div>
+		{% endif %}
+	</div>
+
+	<!-- Adding and removing from Watchlist -->
+	{% if user.is_authenticated %}
+		<div class="watchlist">
+			<form action="{% url 'listing_details' listing.id %}" method="POST">
+				{% csrf_token %}
+				{% if in_watchlist %}
+					<input class="btn btn-danger" type="submit" name="remove_from_watchlist" value="Remove From Your Watchlist">
+				{% else %}
+					<input class="btn btn-success" type="submit" name="add_to_watchlist" value="Add To Your Watchlist">
+				{% endif %}
+			</form>
+		</div>
+	{% else %}
+		<br>
+	{% endif %}
+
+	<!-- Post a comment -->
+	{% if comment_message_f %}
+		<div class="alert alert-danger">
+			{{comment_message_f}}
+		</div>
+	{% endif %}
+	{% if user.is_authenticated %}
+		<form action="{% url 'listing_details' listing.id %}" method="POST">
+			{% csrf_token %}
+			<label for="comment">Post A Comment: </label><br>
+			<textarea name="comment" rows="4" cols="80"></textarea><br>
+			<input type="submit" class="btn btn-primary" name="new_comment">
+		</form>
+	{% else %}
+		<div class="alert alert-warning" role="alert">
+		  Log in to post a comment or make a bid!
+		</div>
+	{% endif %}
+	
+	<!-- See comments -->
+	<div class="Comments">
+		<h3>Comments:</h3>
+		{% for comment in comments reversed %}
+			<p>
+				<span style="font-size:18px;">
+					{{comment.comment_text}}<br>
+				</span>
+				<span style="color: rgb(128, 128, 128); font-size:12px;">
+					by <span style="color: FUCHSIA">
+						<strong>
+							{{comment.poster|title}}
+						</strong>
+					</span> 
+					on <em>{{comment.date}}</em>
+				</span>
+			</p>
+		{% endfor %}
+	</div>
+
+{% endblock %}

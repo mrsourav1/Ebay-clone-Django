@@ -1,0 +1,19 @@
+<!-- {% block body %}
+    <h2> current Listings </h2>
+    {% for listing in listings %}
+
+    <p>
+    <strong>Listing ID:</strong> {{listing.id}} <br>
+    <strong>Title :</strong>{{listing.title}} <br>
+    <strong>Description:</strong>{{listing.description}} <br>
+    {% if listing.current_bid == null %}
+        <strong>Current Bid:</strong><span>Looking for a Bidder</span>
+    {% else %}
+        <strong>Current Bid:</strong> ${{listing.current_bid.bid_price}} <br>
+    {% endif %}
+    <strong>categoty:</strong>{{ listing.category|title }} <br>
+    <a href="{% url 'listing_details' listing.id %}">See Details</a>
+    </p>
+    {% endfor %}
+
+{% endblock %} -->
